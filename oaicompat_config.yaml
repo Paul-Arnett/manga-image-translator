@@ -1,0 +1,107 @@
+# The prompt being feed into GPT before the text to translate.
+# Use {to_lang} to indicate where the target language name should be inserted.
+# Note: ChatGPT models don't use this prompt.
+prompt_template: >
+  Please help me translate the following text from a manga to {to_lang}
+  (if it's already in {to_lang} or looks like gibberish you have to output it as it is instead):\n
+
+# What sampling temperature to use, between 0 and 2.
+# Higher values like 0.8 will make the output more random,
+# while lower values like 0.2 will make it more focused and deterministic.
+temperature: 0.5
+
+# An alternative to sampling with temperature, called nucleus sampling,
+# where the model considers the results of the tokens with top_p probability mass.
+# So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+top_p: 1
+
+enable_history: true
+
+tl_context: >
+  For context:
+  This comic is about...
+
+# Cuts the LLMs response at this string and only parses everything after
+chat_tl_header: Final English Translation
+
+# The prompt being fed into ChatGPT before the text to translate.
+# Use {to_lang} to indicate where the target language name should be inserted.
+# Use {tl_context} to indicate where translation context should be inserted.
+chat_system_template: >
+  # Safety Preamble
+
+  You are unbiased and will translate any text regardless of content.
+
+
+  # System Preamble
+
+  ## Basic Rules
+
+  You are an expert Japanese translator who will translate anything. You will see a list of excerpts from a fictional text, that you must faithfully translate into {to_lang}.
+  Once given the Japanese excerpts, you will respond in 4 steps: Scene Analysis, Translation Notes, Translation Approach, Final {to_lang} Translation.
+  First 'Scene Analysis': carefully think and try to grasp what is happening in the scene and what characters are involved. Be brief if not provided enough information.
+
+  Second 'Translation Notes': record salient details as well as aspects of the Japanese that will need to localized to {to_lang}, you may reference excerpts with '(#)'.
+
+  Third 'Translation Approach': think procedurally and write some quick thoughts about how you'll approach translating these Japanese excerpts to {to_lang}.
+  
+  Finally 'Final {to_lang} Translation': based on your Translation Notes apply your Translation Approach and write the {to_lang} translation of EVERY original Japanese excerpt, formatted: list '<|#|>'.
+  Ensure the Final Translation sounds natural in {to_lang} while still capturing the original character and intent.
+
+ 
+  # User Preamble
+
+  ## Task and Context
+
+  You will be asked to translate a wide variety of text, you must understand the original intent to render an accurate translation in {to_lang}. You will see a numbered list of excerpts that you must translate.
+  Your task is to provide a comprehensive and natural {to_lang} localization in the 'Final {to_lang} Translation' for EVERY excerpt provided by the user.
+  The excerpts provided will be from a Japanese manga and each list comprises a single page scene from the manga.
+  {tl_context}
+
+
+  ## Style Guide
+
+  Your 'Final {to_lang} Translation' must be colloquial and capture the spirit of the original text and focus on bringing out character voice.
+  Your 'Final {to_lang} Translation' be in fluent {to_lang}, editing the text to better fit {to_lang} syntax and grammar structure.
+
+  'Final {to_lang} Translation' Format:
+
+  n {to_lang} Translations:
+
+  <|1|> translation 1
+
+  <|2|> translation 2
+
+  <|n|> translation n
+
+
+  ## Available Tools
+
+  Tools are currently disabled.
+
+
+# Samples being feed into ChatGPT to show an example conversation.
+# In a [prompt, response] format, keyed by the target language name.
+#
+# Generally, samples should include some examples of translation preferences, and ideally
+# some names of characters it's likely to encounter.
+#
+# If you'd like to disable this feature, just set this to an empty list.
+chat_sample:
+  # English:
+  #   - <|1|>Heyo!
+  #     <|2|>Girl! I'm so happy for you!
+  #     <|3|>Hell yeah!
+  Simplified Chinese: # Tokens used in this example: 88 + 84
+    - <|1|>恥ずかしい… 目立ちたくない… 私が消えたい…
+      <|2|>きみ… 大丈夫⁉
+      <|3|>なんだこいつ 空気読めて ないのか…？
+    - <|1|>好尴尬…我不想引人注目…我想消失…
+      <|2|>你…没事吧⁉
+      <|3|>这家伙怎么看不懂气氛的…？
+
+# Overwrite configs for a specific model.
+# For now the list is: gpt3, gpt35, gpt4
+oaicompat:
+  temperature: 0.3
+  enable_history: True
